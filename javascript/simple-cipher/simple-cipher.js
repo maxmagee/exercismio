@@ -11,6 +11,61 @@ const generateLowercaseString = (length) => {
     return randomKey;
 };
 
+const TRANSLATE_TYPES = {
+    "ENCODE" : "ENCODE",
+    "DECODE" : "DECODE"
+};
+
+// Returns an encoded or decoded string
+const encodeOrDecode = (translateType, input, key) => {
+    const minAsciiCode = 97;    // a
+    const maxAsciiCode = 122;   // z
+
+    const encode = (index, offset) => {
+        // Shift the letter by the offset and wrap around if we exceed the a-z bounds (122 -> 122, 123 -> 97)
+        let newCharCode = (input.charCodeAt(index) + offset) % (maxAsciiCode + 1);
+        // If we had to wrap around, shift up to the correct window
+        if (newCharCode < 97) { newCharCode += minAsciiCode; }    
+
+        return String.fromCharCode(newCharCode);
+    };
+
+    const decode = (index, offset) => {
+        // Shift the letter by the negative offset and wrap around if we exceed the a-z bounds (97 -> 97, 96 -> 122)
+        let newCharCode = input.charCodeAt(index) - offset;
+        if (newCharCode < minAsciiCode) { 
+            newCharCode = maxAsciiCode - (minAsciiCode - newCharCode) + 1; 
+        }
+
+        return String.fromCharCode(newCharCode);
+    };
+
+    let translatedText = "";
+    let translateMethod = null;
+
+    switch (translateType) {
+        case TRANSLATE_TYPES.ENCODE:
+            translateMethod = encode;
+            break;
+        case TRANSLATE_TYPES.DECODE:
+            translateMethod = decode;
+            break;
+        default:
+            throw new Error(`Invalid TRANSLATE_TYPE: ${translateType}`);
+            break;
+    }
+
+    for (let i = 0; i < input.length; i++) {
+        const keyIndex = i % key.length;
+        const keyIndexCode = key.charCodeAt(keyIndex);
+        const offset = keyIndexCode - minAsciiCode;
+
+        translatedText += translateMethod(i, offset);
+    }
+
+    return translatedText;
+};
+
 class Cipher {
     constructor(key) {
         this.key = this.setKey(key);
@@ -32,46 +87,11 @@ class Cipher {
     }
 
     encode(input) {
-        const minAsciiCode = 97;    // a
-        const maxAsciiCode = 122;   // z
-        let encodedText = "";
-
-        for (let i = 0; i < input.length; i++) {
-            const keyIndex = i % this.key.length;
-            const keyIndexCode = this.key.charCodeAt(keyIndex);
-            const offset = keyIndexCode - minAsciiCode;
-
-            // Shift the letter by the offset and wrap around if we exceed the a-z bounds (122 -> 122, 123 -> 97)
-            let newCharCode = (input.charCodeAt(i) + offset) % (maxAsciiCode + 1);
-            // If we had to wrap around, shift up to the correct window
-            if (newCharCode < 97) { newCharCode += minAsciiCode; }    
-
-            encodedText += String.fromCharCode(newCharCode);
-        }
-
-        return encodedText;
+        return encodeOrDecode(TRANSLATE_TYPES.ENCODE, input, this.key);
     }
 
     decode(input) {
-        const minAsciiCode = 97;    // a
-        const maxAsciiCode = 122;   // z
-        let decodedText = "";
-
-        for (let i = 0; i < input.length; i++) {
-            const keyIndex = i % this.key.length;
-            const keyIndexCode = this.key.charCodeAt(keyIndex);
-            const offset = keyIndexCode - minAsciiCode;
-
-            // Shift the letter by the negative offset and wrap around if we exceed the a-z bounds (97 -> 97, 96 -> 122)
-            let newCharCode = input.charCodeAt(i) - offset;
-            if (newCharCode < minAsciiCode) { 
-                newCharCode = maxAsciiCode - (minAsciiCode - newCharCode) + 1; 
-            }
-
-            decodedText += String.fromCharCode(newCharCode);
-        }
-
-        return decodedText;
+        return encodeOrDecode(TRANSLATE_TYPES.DECODE, input, this.key);
     }
 };
 
