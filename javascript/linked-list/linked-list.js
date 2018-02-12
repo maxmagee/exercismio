@@ -1,11 +1,12 @@
 class Node {
     constructor(value) {
+        this.next = null;
+        this.prev = null;
         this.value = value;
     }
 };
 
 class LinkedList {
-    
     constructor() {
         this.nodeCount = 0;
         this.head = null;       // Points to start
