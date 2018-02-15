@@ -19,7 +19,6 @@ class PhoneNumber {
             if (newNumberString.charAt(0) === '1') { return newNumberString.slice(1); }
             else { return null; }
         }
-        if (newNumberString.length > 11) { return null; }
         
         return null;
     }
