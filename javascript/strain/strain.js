@@ -1,10 +1,22 @@
 const strain = {
     discard: (collection, predicate) => {
-        return collection.filter((item) => !predicate(item));
+        const discarded = [];
+
+        collection.forEach((item) => {
+            if (!predicate(item)) { discarded.push(item); }
+        });
+
+        return discarded;
     },
     keep: (collection, predicate) => {
-        return collection.filter(predicate);
+        const kept = [];
+
+        collection.forEach((item) => {
+            if (predicate(item)) { kept.push(item); }
+        });
+
+        return kept;
     }
-}
+};
 
 module.exports = strain;
