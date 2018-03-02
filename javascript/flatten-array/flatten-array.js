@@ -1,16 +1,11 @@
+const lodashFlattenDeep = require('lodash.flattendeep');
+
 class Flattener {
     flatten(input) {
-        let result = [];
-
-        input.forEach((element) => {
-            if (element !== null) {
-                Array.isArray(element) ? 
-                    result.push(...this.flatten(element)) :
-                    result.push(element);
-            }
-        });
-
-        return result;
+        return lodashFlattenDeep(input)
+            .filter((item) => {
+                return item !== null && item !== undefined
+            });
     }
 }
 

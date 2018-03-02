@@ -1,0 +1,14 @@
+{
+  "name": "flatten-array",
+  "version": "1.0.0",
+  "description": "Flatten an array of variably nested arrays.",
+  "main": "flatten-array.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.flattendeep": "^4.4.0"
+  }
+}
